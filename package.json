@@ -1,6 +1,6 @@
 {
-  "name": "react-image-lightbox",
-  "version": "5.1.4",
+  "name": "@1stArriving/react-image-lightbox",
+  "version": "5.1.5",
   "description": "A lightbox component for React.js",
   "scripts": {
     "build": "rollup -c",
@@ -28,12 +28,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/frontend-collective/react-image-lightbox.git"
+    "url": "git+https://github.com/amiranda-fa/react-image-lightbox.git"
   },
   "homepage": "https://frontend-collective.github.io/react-image-lightbox",
   "bugs": "https://github.com/frontend-collective/react-image-lightbox/issues",
   "authors": [
-    "Chris Fritz"
+    "Chris Fritz",
+    "Alberto Miranda"
   ],
   "license": "MIT",
   "browserslist": [
