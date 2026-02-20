@@ -27,6 +27,10 @@ import {
 } from './constant';
 import './style.css';
 
+function log() {
+  // console.log('[ react-image-lightbox ]', ...arguments);
+}
+
 class ReactImageLightbox extends Component {
   static isTargetMatchImage(target) {
     return target && /ril-image-current/.test(target.className);
@@ -191,6 +195,13 @@ class ReactImageLightbox extends Component {
   }
 
   componentDidMount() {
+    log('componentDidMount');
+
+    // Set didUnmount to false in case the component is re-mounted.
+    // This causes a failure when React StrictMode is on and the component is
+    // re-mounted: the first open image shows an infinite spinner.
+    this.didUnmount = false;
+
     if (!this.props.animationDisabled) {
       // Make opening animation play
       this.setState({ isClosing: false });
@@ -256,6 +267,7 @@ class ReactImageLightbox extends Component {
   }
 
   componentWillUnmount() {
+    log('componentWillUnmount');
     this.didUnmount = true;
     Object.keys(this.listeners).forEach(type => {
       this.windowContext.removeEventListener(type, this.listeners[type]);
@@ -1119,9 +1131,7 @@ class ReactImageLightbox extends Component {
   loadImage(srcType, imageSrc, done) {
     // Return the image info if it is already cached
     if (this.isImageLoaded(imageSrc)) {
-      this.setTimeout(() => {
-        done();
-      }, 1);
+      done();
       return;
     }
 
@@ -1151,6 +1161,12 @@ class ReactImageLightbox extends Component {
         height: inMemoryImage.height,
       };
 
+      // log('DEBUG: Image loaded', {
+      //   imageSrc,
+      //   srcType,
+      //   width: inMemoryImage.width,
+      //   height: inMemoryImage.height,
+      // });
       done();
     };
 
@@ -1160,18 +1176,38 @@ class ReactImageLightbox extends Component {
   // Load all images and their thumbnails
   loadAllImages(props = this.props) {
     const generateLoadDoneCallback = (srcType, imageSrc) => err => {
+      // log('DEBUG: Image load callback', {
+      //   imageSrc,
+      //   srcType,
+      //   error: err,
+      // });
       // Give up showing image on error
       if (err) {
+        // log('DEBUG: Image failed to load', {
+        //   imageSrc,
+        //   srcType,
+        //   error: err,
+        // });
         return;
       }
 
       // Don't rerender if the src is not the same as when the load started
       // or if the component has unmounted
       if (this.props[srcType] !== imageSrc || this.didUnmount) {
+        // log('DEBUG: Image load callback ignored', {
+        //   imageSrc,
+        //   srcType,
+        //   currentSrc: this.props[srcType],
+        //   didUnmount: this.didUnmount,
+        // });
         return;
       }
 
       // Force rerender with the new image
+      log('FORCE UDPATE after image load', {
+        imageSrc,
+        srcType,
+      });
       this.forceUpdate();
     };
 
@@ -1347,6 +1383,10 @@ class ReactImageLightbox extends Component {
         return;
       }
       if (bestImageInfo === null) {
+        log('Image not loaded yet', {
+          srcType,
+          imageSrc: this.props[srcType],
+        });
         const loadingIcon =
           loader !== undefined ? (
             loader
